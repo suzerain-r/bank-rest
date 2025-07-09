@@ -8,3 +8,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+  liquibase:
+    change-log: classpath:db/migration/changelog-master.yml
+
+
+springdoc:
+  packages-to-scan: com.example.bankcards.controller
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json
+  show-actuator: false
+  writer-with-default-pretty-printer: true
+  paths-to-match: /api/**
+

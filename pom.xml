@@ -5,8 +5,8 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.2</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>3.2.5</version>
+        <relativePath/>
     </parent>
     <groupId>com.example</groupId>
     <artifactId>server</artifactId>
@@ -87,20 +87,41 @@
             <scope>test</scope>
         </dependency>
 
-        <!--		&lt;!&ndash; MapStruct API &ndash;&gt;-->
-        <!--		<dependency>-->
-        <!--			<groupId>org.mapstruct</groupId>-->
-        <!--			<artifactId>mapstruct</artifactId>-->
-        <!--			<version>1.5.5.Final</version>-->
-        <!--		</dependency>-->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
 
-        <!--		&lt;!&ndash; MapStruct Processor (для аннотаций) &ndash;&gt;-->
-        <!--		<dependency>-->
-        <!--			<groupId>org.mapstruct</groupId>-->
-        <!--			<artifactId>mapstruct-processor</artifactId>-->
-        <!--			<version>1.5.5.Final</version>-->
-        <!--			<scope>provided</scope>-->
-        <!--		</dependency>-->
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.7.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>5.2.0</version>
+            <scope>test</scope>
+        </dependency>
+
+
+
 
     </dependencies>
 
@@ -109,14 +130,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/migration/v1.0/01-create-table-users.sql
+  - include:
+      file: db/migration/v1.0/02-insert-users-admin.sql
+  - include:
+      file: db/migration/v1.0/03-create-table-cards.sql

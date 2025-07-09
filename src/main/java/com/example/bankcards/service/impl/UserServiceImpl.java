@@ -2,6 +2,7 @@ package com.example.bankcards.service.impl;
 
 import com.example.bankcards.dto.UserDTO;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.NotFoundException;
 import com.example.bankcards.mapper.UserMapper;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.service.UserService;
@@ -20,7 +21,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO findByUsername(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         return UserMapper.toDto(user);
     }
 
@@ -40,6 +42,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException("Пользователь не найден");
+        }
         userRepository.deleteById(userId);
     }
 }
