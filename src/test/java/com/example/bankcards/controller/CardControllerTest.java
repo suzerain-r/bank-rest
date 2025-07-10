@@ -82,7 +82,7 @@ public class CardControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[0].ownerName").value("user1"))
+                .andExpect(jsonPath("$[0].username").value("user1"))
                 .andExpect(jsonPath("$[0].maskedNumber").value("**** 1234"))
                 .andExpect(jsonPath("$[0].balance").value(1000.00))
                 .andExpect(jsonPath("$[0].status").value("ACTIVE"));

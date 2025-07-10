@@ -33,7 +33,7 @@ public class CardServiceImpl implements CardService {
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
         Card card = Card.builder()
-                .ownerName(dto.getOwnerName())
+                .username(user.getUsername())
                 .expiryDate(LocalDate.now().plusYears(2))
                 .balance(BigDecimal.ZERO)
                 .user(user)
@@ -64,10 +64,30 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
+    public void replenishBalance(Long cardId, BigDecimal amount, Long userId) {
+        Card card = cardRepo.findById(cardId)
+                .orElseThrow(() -> new NotFoundException("Карта не найдена"));
+
+        if (!card.getUser().getId().equals(userId)) {
+            throw new ValidationException("Вы не можете пополнить чужую карту");
+        }
+
+        if (card.getStatus().equals(CardStatus.BLOCKED) || card.getStatus().equals(CardStatus.EXPIRED)) {
+            throw new ValidationException("Карта имеет статус: " + card.getStatus());
+        }
+
+        card.setBalance(card.getBalance().add(amount));
+        cardRepo.save(card);
+    }
+
+    @Override
     public void requestBlock(Long cardId, Long userId) {
         Card card = cardRepo.findById(cardId).orElseThrow(() -> new NotFoundException("Карта не найдена"));
         if (!card.getUser().getId().equals(userId)) {
             throw new AccessDeniedException("Доступ запрещен");
+        }
+        if(card.getStatus().equals(CardStatus.BLOCKED) || card.getStatus().equals(CardStatus.EXPIRED)) {
+            throw new ValidationException("Карта имеет статус: " + card.getStatus());
         }
         card.setStatus(CardStatus.BLOCKED);
         cardRepo.save(card);
@@ -75,20 +95,37 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public void transfer(Long fromId, Long toId, BigDecimal amount) {
-        Card from = cardRepo.findById(fromId).orElseThrow(() -> new NotFoundException("Карта отправителя не найдена"));
-        Card to = cardRepo.findById(toId).orElseThrow(() -> new NotFoundException("Карта получателя не найдена"));
+        Card from = cardRepo.findById(fromId)
+                .orElseThrow(() -> new NotFoundException("Карта отправителя не найдена"));
+        Card to = cardRepo.findById(toId)
+                .orElseThrow(() -> new NotFoundException("Карта получателя не найдена"));
+
+        if (from.getStatus() == CardStatus.BLOCKED || from.getStatus() == CardStatus.EXPIRED) {
+            throw new ValidationException("Карта " + fromId + " имеет статус: " + from.getStatus());
+        }
+
+        if (to.getStatus() == CardStatus.BLOCKED || to.getStatus() == CardStatus.EXPIRED) {
+            throw new ValidationException("Карта " + toId + " имеет статус: " + to.getStatus());
+        }
+
         if (from.getBalance().compareTo(amount) < 0) {
             throw new ValidationException("Недостаточно средств");
         }
+
         from.setBalance(from.getBalance().subtract(amount));
         to.setBalance(to.getBalance().add(amount));
+
         cardRepo.save(from);
         cardRepo.save(to);
     }
 
+
     @Override
     public void blockByAdmin(Long cardId) {
         Card card = cardRepo.findById(cardId).orElseThrow(() -> new NotFoundException("Карта не найдена"));
+        if(card.getStatus().equals(CardStatus.BLOCKED) || card.getStatus().equals(CardStatus.EXPIRED)) {
+            throw new ValidationException("Карта имеет статус: " + card.getStatus());
+        }
         card.setStatus(CardStatus.BLOCKED);
         cardRepo.save(card);
     }

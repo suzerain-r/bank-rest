@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8"><title>AdminController</title></head>
+<body>
+<h1>AdminController</h1>
+
+<h2>Создать карту</h2>
+<input id="user-id" placeholder="User ID">
+<button onclick="createCard()">Создать</button>
+<pre id="create-result"></pre>
+
+<h2>Заблокировать карту</h2>
+<input id="admin-block-id" placeholder="Card ID">
+<button onclick="block()">Заблокировать</button>
+<p id="admin-block-msg"></p>
+
+<h2>Удалить карту</h2>
+<input id="delete-card-id" placeholder="Card ID">
+<button onclick="deleteCard()">Удалить</button>
+<p id="delete-card-msg"></p>
+
+<h2>Удалить пользователя</h2>
+<input id="delete-user-id" placeholder="User ID">
+<button onclick="deleteUser()">Удалить</button>
+<p id="delete-user-msg"></p>
+
+<h2>Все пользователи</h2>
+<button onclick="getUsers()">Получить</button>
+<pre id="users"></pre>
+
+<h2>Все карты</h2>
+<button onclick="getCards()">Получить</button>
+<pre id="admin-cards"></pre>
+
+<script>
+    function createCard() {
+        fetch("/api/admin/cards/create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            },
+            body: JSON.stringify({
+                userId: document.getElementById("user-id").value,
+            })
+        }).then(res => res.json())
+            .then(data => document.getElementById("create-result").innerText = JSON.stringify(data, null, 2));
+    }
+
+    function block() {
+        const id = document.getElementById("admin-block-id").value;
+        fetch("/api/admin/cards/" + id + "/block", {
+            method: "PUT",
+            headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+        }).then(res => res.json())
+            .then(data => document.getElementById("admin-block-msg").innerText = JSON.stringify(data, null, 2));
+    }
+
+    function deleteCard() {
+        const id = document.getElementById("delete-card-id").value;
+        fetch("/api/admin/cards/" + id, {
+            method: "DELETE",
+            headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+        }).then(res => res.json())
+            .then(data => document.getElementById("delete-card-msg").innerText = JSON.stringify(data, null, 2));
+    }
+
+    function deleteUser() {
+        const id = document.getElementById("delete-user-id").value;
+        fetch("/api/admin/users/" + id, {
+            method: "DELETE",
+            headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+        }).then(res => res.json())
+            .then(data => document.getElementById("delete-user-msg").innerText = JSON.stringify(data, null, 2));
+    }
+
+    function getUsers() {
+        fetch("/api/admin/users", {
+            headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+        }).then(res => res.json())
+            .then(data => document.getElementById("users").innerText = JSON.stringify(data, null, 2));
+    }
+
+    function getCards() {
+        fetch("/api/admin/cards", {
+            headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+        }).then(res => res.json())
+            .then(data => document.getElementById("admin-cards").innerText = JSON.stringify(data, null, 2));
+    }
+</script>
+</body>
+</html>

@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class CardDTO {
     Long id;
-    String ownerName;
+    String username;
     String maskedNumber;
     BigDecimal balance;
     CardStatus status;

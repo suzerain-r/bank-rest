@@ -25,7 +25,7 @@ public class Card {
     @Column(nullable = false, unique = true)
     private String encryptedCardNumber;
 
-    private String ownerName;
+    private String username;
     private LocalDate expiryDate;
 
     @Enumerated(EnumType.STRING)

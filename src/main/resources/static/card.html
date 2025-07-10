@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8"><title>CardController</title></head>
+<body>
+<h1>CardController</h1>
+
+<h2>Мои карты</h2>
+<button onclick="getMyCards()">Показать карты</button>
+<pre id="cards"></pre>
+
+<h2>Пополнить баланс</h2>
+<input id="replenish-id" placeholder="Card ID">
+<input id="replenish-amount" placeholder="Amount">
+<button onclick="replenish()">Пополнить</button>
+<p id="replenish-msg"></p>
+
+<h2>Перевод</h2>
+<input id="from-id" placeholder="From Card ID">
+<input id="to-id" placeholder="To Card ID">
+<input id="amount" placeholder="Amount">
+<button onclick="transfer()">Перевести</button>
+<p id="transfer-msg"></p>
+
+<h2>Заблокировать свою карту</h2>
+<input id="block-id" placeholder="Card ID">
+<button onclick="blockCard()">Заблокировать</button>
+<p id="block-msg"></p>
+
+<h2>Получить номер карты по ID</h2>
+<input id="card-id" placeholder="Card ID">
+<button onclick="getNumber()">Получить</button>
+<pre id="number"></pre>
+
+<script>
+    function getMyCards() {
+        fetch("/api/cards/my", {
+            headers: {"Authorization": "Bearer " + localStorage.getItem("token")}
+        }).then(res => res.json())
+            .then(data => document.getElementById("cards").innerText = JSON.stringify(data, null, 2));
+    }
+
+    function replenish() {
+        const cardId = document.getElementById("replenish-id").value;
+        const amount = parseFloat(document.getElementById("replenish-amount").value);
+
+        fetch(`/api/cards/${cardId}/replenish`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            },
+            body: JSON.stringify({ amount: amount })
+        }).then(res => res.json())
+            .then(data => document.getElementById("replenish-msg").innerText = JSON.stringify(data, null, 2));
+    }
+
+
+    function transfer() {
+        fetch("/api/cards/transfer", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            },
+            body: JSON.stringify({
+                fromCardId: document.getElementById("from-id").value,
+                toCardId: document.getElementById("to-id").value,
+                amount: parseFloat(document.getElementById("amount").value)
+            })
+        }).then(res => res.json())
+            .then(data => document.getElementById("transfer-msg").innerText = JSON.stringify(data, null, 2));
+    }
+
+    function blockCard() {
+        const id = document.getElementById("block-id").value;
+        fetch("/api/cards/" + id + "/block", {
+            method: "PUT",
+            headers: {"Authorization": "Bearer " + localStorage.getItem("token")}
+        }).then(res => res.json())
+            .then(data => document.getElementById("block-msg").innerText = JSON.stringify(data, null, 2));
+    }
+
+    function getNumber() {
+        const cardId = document.getElementById("card-id").value;
+        fetch("/api/cards/" + cardId + "/number", {
+            headers: {"Authorization": "Bearer " + localStorage.getItem("token")}
+        }).then(res => res.json())
+            .then(data => document.getElementById("number").innerText = JSON.stringify(data, null, 2));
+    }
+</script>
+</body>
+</html>

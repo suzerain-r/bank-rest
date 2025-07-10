@@ -53,7 +53,7 @@ class AdminControllerTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void createCard() throws Exception {
-        CreateCardRequest request = new CreateCardRequest(1L, "John Doe");
+        CreateCardRequest request = new CreateCardRequest(1L);
         CardDTO response = new CardDTO(
                 1L,
                 "John Doe",
@@ -69,7 +69,7 @@ class AdminControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(response.getId()))
-                .andExpect(jsonPath("$.ownerName").value(response.getOwnerName()))
+                .andExpect(jsonPath("$.username").value(response.getUsername()))
                 .andExpect(jsonPath("$.maskedNumber").value(response.getMaskedNumber()))
                 .andExpect(jsonPath("$.balance").value(response.getBalance().doubleValue()))
                 .andExpect(jsonPath("$.status").value(response.getStatus().toString()));

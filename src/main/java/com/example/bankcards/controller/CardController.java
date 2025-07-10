@@ -2,6 +2,7 @@ package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.CardDTO;
 import com.example.bankcards.exception.NotFoundException;
+import com.example.bankcards.payload.request.ReplenishBalanceRequest;
 import com.example.bankcards.payload.response.CardNumberResponse;
 import com.example.bankcards.payload.request.TransferRequest;
 import com.example.bankcards.entity.User;
@@ -34,6 +35,19 @@ public class CardController {
         return ResponseEntity.ok(cardService.getUserCards(user.getId()));
     }
 
+
+    @Operation(summary = "Пополнить баланс своей карты")
+    @PutMapping("/{id}/replenish")
+    public ResponseEntity<MessageResponse> replenishBalance(@PathVariable Long id,
+                                                            @RequestBody ReplenishBalanceRequest replenishBalanceRequest,
+                                                            Principal principal) {
+        User user = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+
+        cardService.replenishBalance(id, replenishBalanceRequest.getAmount(), user.getId());
+        return ResponseEntity.ok(new MessageResponse("Баланс успешно пополнен"));
+    }
+
     @Operation(summary = "Перевести деньги между картами")
     @PostMapping("/transfer")
     public ResponseEntity<MessageResponse> transfer(@RequestBody TransferRequest transferRequest) {
@@ -51,8 +65,8 @@ public class CardController {
     }
 
     @Operation(summary = "Получить полный номер карты по ID")
-    @GetMapping("/{cardId}/number")
-    public ResponseEntity<CardNumberResponse> getFullCardNumber(@PathVariable Long cardId) {
-        return ResponseEntity.ok(cardService.getFullCardNumber(cardId));
+    @GetMapping("/{id}/number")
+    public ResponseEntity<CardNumberResponse> getFullCardNumber(@PathVariable Long id) {
+        return ResponseEntity.ok(cardService.getFullCardNumber(id));
     }
 }

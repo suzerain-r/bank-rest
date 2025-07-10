@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface CardService {
     List<CardDTO> getUserCards(Long userId);
+    void replenishBalance(Long cardId, BigDecimal amount, Long userId);
     void requestBlock(Long cardId, Long userId);
     void transfer(Long fromId, Long toId, BigDecimal amount);
     CardNumberResponse getFullCardNumber(Long userId);

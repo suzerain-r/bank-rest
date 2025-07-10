@@ -48,7 +48,7 @@ class CardServiceImplTest {
 
         mockCard = Card.builder()
                 .id(1L)
-                .ownerName("test")
+                .username("test")
                 .encryptedCardNumber(Util.encrypt("1111222233334444"))
                 .balance(BigDecimal.valueOf(1000))
                 .expiryDate(LocalDate.now().plusYears(2))
@@ -59,7 +59,7 @@ class CardServiceImplTest {
 
     @Test
     void createCard_success() {
-        CreateCardRequest dto = new CreateCardRequest(1L, "test");
+        CreateCardRequest dto = new CreateCardRequest(1L);
 
         when(userRepo.findById(1L)).thenReturn(Optional.of(mockUser));
         when(cardRepo.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
@@ -67,7 +67,7 @@ class CardServiceImplTest {
         CardDTO result = cardService.createCard(dto);
 
         assertThat(result).isNotNull();
-        assertThat(result.getOwnerName()).isEqualTo("test");
+        assertThat(result.getUsername()).isEqualTo("test");
         assertThat(result.getStatus()).isEqualTo(CardStatus.ACTIVE);
     }
 
@@ -75,7 +75,7 @@ class CardServiceImplTest {
     void createCard_userNotFound() {
         when(userRepo.findById(1L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> cardService.createCard(new CreateCardRequest(1L, "test")))
+        assertThatThrownBy(() -> cardService.createCard(new CreateCardRequest(1L)))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Пользователь не найден");
     }
@@ -163,6 +163,6 @@ class CardServiceImplTest {
         List<CardDTO> result = cardService.getAllCards();
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getOwnerName()).isEqualTo("test");
+        assertThat(result.get(0).getUsername()).isEqualTo("test");
     }
 }

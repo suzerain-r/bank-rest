@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8"><title>AuthController</title></head>
+<body>
+<h1>AuthController</h1>
+
+<h2>Регистрация</h2>
+<input id="reg-username" placeholder="Username">
+<input id="reg-password" type="password" placeholder="Password">
+<button onclick="register()">Зарегистрироваться</button>
+<p id="register-msg"></p>
+
+<h2>Вход</h2>
+<input id="login-username" placeholder="Username">
+<input id="login-password" type="password" placeholder="Password">
+<button onclick="login()">Войти</button>
+<p id="login-msg"></p>
+
+<script>
+    function register() {
+        fetch("/api/auth/register", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                username: document.getElementById('reg-username').value,
+                password: document.getElementById('reg-password').value
+            })
+        }).then(res => res.json())
+            .then(data => document.getElementById('register-msg').innerText = JSON.stringify(data, null, 2));
+    }
+
+    function login() {
+        const username = document.getElementById('login-username').value;
+        fetch("/api/auth/login", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                username: document.getElementById('login-username').value,
+                password: document.getElementById('login-password').value
+            })
+        }).then(res => res.json())
+            .then(data => {
+                localStorage.setItem("token", data.token);
+                document.getElementById('login-msg').innerText = JSON.stringify(data, null, 2);
+            });
+    }
+</script>
+</body>
+</html>
