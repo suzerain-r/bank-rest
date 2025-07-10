@@ -13,7 +13,10 @@ git clone https://github.com/suzerain-r/bank-rest.git
 # 2. Переходим в директорию проекта
 cd bank-rest
 
-# 3. Собираем и запускаем контейнеры
+# 3. Собираем проект
+mvn package -DskipTests
+
+# 4. Собираем и запускаем контейнеры
 docker-compose up --build
 ```
 
